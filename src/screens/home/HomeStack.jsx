@@ -19,6 +19,7 @@ import {useTheme} from '../../context/ThemeContext';
 import Checkout from './Checkout';
 import Restaurant from './Restaurant';
 import Details from './Details';
+import PaymentSuccess from './PaymentSuccess';
 
 const Tab = createBottomTabNavigator();
 const {height} = Dimensions.get('window');
@@ -110,6 +111,11 @@ function HomeStack({...props}) {
       <Stack.Screen
         name="checkout"
         component={Checkout}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="paymentsuccess"
+        component={PaymentSuccess}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

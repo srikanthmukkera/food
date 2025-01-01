@@ -6,12 +6,21 @@ import {useAuth} from '../../context/AuthContext';
 import FaIcon from 'react-native-vector-icons/FontAwesome';
 import {categories} from '../../demo/restaurants/categories';
 import classNames from 'classnames';
+import moment from 'moment';
 
 export default function Checkout(props) {
   const navigation = useNavigation();
   const {safeAreaHeight: height, safeAreaWidth: width} = useTheme();
-  const {user, cartItems, handleUserCart} = useAuth();
-
+  const {user, cartItems, handleUserCart, setCartItems, handleTransaction} =
+    useAuth();
+  const {items, restaurant, count} =
+    useMemo(() => cartItems?.[user?.email] || {}, [user, cartItems]) || {};
+  const totalAmount = useMemo(
+    () =>
+      (restaurant?.deliveryCharge || 0) +
+      (items || [])?.reduce((prev, curr) => prev + curr.price * curr?.count, 0),
+    [restaurant, items],
+  );
   return (
     <View style={{height, width, flex: 1}}>
       <View
@@ -36,12 +45,7 @@ export default function Checkout(props) {
         <View className="flex-1 ">
           <FlatList
             className="flex-1"
-            data={
-              cartItems?.[user.email]?.count &&
-              cartItems?.[user.email]?.items
-                ?.filter(item => item?.count)
-                ?.sort((a, b) => a?.name < b.name)
-            }
+            data={count && items?.filter(item => item?.count)}
             keyExtractor={item => item.name}
             renderItem={({item, index}) => {
               const cat = categories.find(c => c.name === item?.category?.name);
@@ -62,9 +66,14 @@ export default function Checkout(props) {
                     <Text className="line-clamp-2 font-light text-xs text-white">
                       {item?.description}
                     </Text>
-                    <Text className="text-white font-bold">
-                      ₹ {item?.price}
-                    </Text>
+                    <View className="flex flex-row items-center gap-x-1">
+                      <Text className="text-white font-bold">
+                        ₹ {item?.price} X {item?.count} =
+                      </Text>
+                      <Text className="text-[#ff7622] font-extrabold text-xl">
+                        {item.price * item.count}
+                      </Text>
+                    </View>
                     <View className="w-full h-[34px] lx flex-row justify-end">
                       <View
                         className={classNames(
@@ -76,7 +85,7 @@ export default function Checkout(props) {
                             handleUserCart(
                               user.email,
                               item,
-                              cartItems?.[user?.email]?.restaurant,
+                              restaurant,
                               'minus',
                             )
                           }
@@ -88,12 +97,7 @@ export default function Checkout(props) {
                         </Text>
                         <TouchableOpacity
                           onPress={() => {
-                            handleUserCart(
-                              user.email,
-                              item,
-                              cartItems?.[user?.email]?.restaurant,
-                              'add',
-                            );
+                            handleUserCart(user.email, item, restaurant, 'add');
                           }}
                           className="h-full aspect-square flex justify-center items-center bg-[#f5f5f533] rounded-full">
                           <FaIcon name="plus" size={12} color="white" />
@@ -122,15 +126,32 @@ export default function Checkout(props) {
         <View className="w-full h-fit flex flex-row justify-between items-center">
           <View className="flex flex-row items-center gap-x-2">
             <Text className="text-black text-xl">Total: </Text>
-            <Text className="text-black font-bold text-xl">₹</Text>
+            <Text className="text-black font-bold text-xl">
+              ₹ {totalAmount}{' '}
+            </Text>
           </View>
           <View className="flex flex-row items-center gap-x-2">
             <Text className="text-black">Breakdown</Text>
             <FaIcon name="chevron-right" color="black" />
           </View>
         </View>
-        <TouchableOpacity className="w-full px-5 p-5 rounded-md bg-[#ff7622] flex justify-center items-center ">
-          <Text className="text-white">PLACE ORDER</Text>
+        <TouchableOpacity
+          onPress={() => {
+            const transactionId = `${Math.random() * 12}`.slice(3, 15);
+            const transactionData = {
+              transactionId,
+              transactionAmount: totalAmount,
+              transactionDate: moment().format('HH:mm | DD MMM YYYY'),
+              typeOfTrnsaction: 'Online',
+              status: 'Success',
+              orderDetails: {restaurant, items, count},
+            };
+            setCartItems({...cartItems, [user?.email]: {}});
+            handleTransaction(transactionData);
+            navigation.navigate('paymentsuccess', transactionData);
+          }}
+          className="w-full px-5 p-5 rounded-md bg-[#ff7622] flex justify-center items-center ">
+          <Text className="text-white">CHECK OUT</Text>
         </TouchableOpacity>
       </View>
     </View>

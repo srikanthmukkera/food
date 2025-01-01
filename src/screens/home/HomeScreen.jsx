@@ -47,8 +47,11 @@ function HomeScreen({navigation, ...props}) {
     safeAreaHeight: height,
     safeAreaWidth: width,
     setShowBottomTab,
+    showBottomSheet,
+    setShowBottomSheet,
   } = useTheme();
-  const {user, cartItems} = useAuth();
+  const {user, cartItems, logout} = useAuth();
+
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
@@ -115,9 +118,39 @@ function HomeScreen({navigation, ...props}) {
       <View className="w-full gap-y-5 mb-3">
         <View className="w-full h-[50px] flex flex-row justify-between">
           <View className="h-full flex flex-row items-center gap-x-5">
-            <View className="h-full aspect-square bg-[#ECF0F4] rounded-full justify-center items-center">
-              <FeatherIcon name="bar-chart-2" size={24} className="rotate-90" />
-            </View>
+            <TouchableOpacity
+              onPress={() => {
+                setShowBottomSheet({
+                  ...showBottomSheet,
+                  isActive: true,
+                  index: 0,
+                  height: height * 0.25,
+                  children: (
+                    <View className="w-full p-5">
+                      <TouchableOpacity
+                        onPress={() => {
+                          logout();
+                          setShowBottomSheet({
+                            isActive: false,
+                            children: null,
+                            index: -1,
+                          });
+                        }}
+                        className="w-full p-5 flex justify-center items-center bg-red-700 rounded-xl">
+                        <Text className="text-white font-bold">LOGOUT</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ),
+                });
+              }}>
+              <View className="h-full aspect-square bg-[#ECF0F4] rounded-full justify-center items-center">
+                <FeatherIcon
+                  name="bar-chart-2"
+                  size={24}
+                  className="rotate-90"
+                />
+              </View>
+            </TouchableOpacity>
             <View className="max-w-[60%]">
               <Text className="text-sm font-medium text-[#ff7622] w-full">
                 DELIVER TO

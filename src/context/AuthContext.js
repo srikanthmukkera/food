@@ -16,13 +16,19 @@ const AuthContext = createContext({
   authenticateUser: () => {},
   setUsers: () => {},
   cartItems: {},
+  transactionData: {},
   setCartItems: () => {},
   handleUserCart: () => {},
+  handleTransaction: () => {},
 });
 
 export const AuthProvider = ({children}) => {
   const [_users, setUsers] = useAsyncStorageM('users', users);
   const [cartItems, setCartItems] = useAsyncStorageM('userCartItems', {});
+  const [transactionData, setTransactionData] = useAsyncStorageM(
+    'userTransactionsData',
+    {},
+  );
 
   const [user, setUser] = useAsyncStorageM('user', null);
   const [token, setToken] = useAsyncStorageM('token', '');
@@ -63,9 +69,8 @@ export const AuthProvider = ({children}) => {
                 },
               ]
           : [action === 'add' ? {...item, count: 1} : {...item, count: 0}]
-      )
-        .filter(i => i.name)
-        .sort((a, b) => a.name > b.name);
+      ).filter(i => i.name);
+
       console.log(items, 'items=====');
 
       let _cartItems = {
@@ -80,6 +85,16 @@ export const AuthProvider = ({children}) => {
 
       setCartItems(_cartItems);
     }
+  };
+
+  const handleTransaction = _transactionData => {
+    setTransactionData({
+      ...transactionData,
+      [user?.email]: [
+        ...(transactionData?.[user?.email] || []),
+        _transactionData,
+      ],
+    });
   };
 
   const authenticateUser = user => {
@@ -135,8 +150,10 @@ export const AuthProvider = ({children}) => {
       cartItems,
       setCartItems,
       handleUserCart,
+      transactionData,
+      handleTransaction,
     }),
-    [user, _users, token, loader, deviceToken, cartItems],
+    [user, _users, token, loader, deviceToken, cartItems, transactionData],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

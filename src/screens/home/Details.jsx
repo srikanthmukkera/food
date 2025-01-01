@@ -124,6 +124,9 @@ function Details({navigation, route, ...props}) {
         <TouchableOpacity
           onPress={() => {
             if (!count) handleUserCart(user.email, item, restaurant, 'add');
+            else {
+              navigation.navigate('checkout');
+            }
           }}
           className="w-full px-5 p-2 rounded-md bg-[#ff7622] flex justify-center items-center h-[40px]">
           <Text className="text-white">
