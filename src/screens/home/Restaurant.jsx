@@ -113,85 +113,77 @@ function Restaurant({route, ...props}) {
         </View>
         <View className="flex-1 ">
           <FlatList
-            data={['restaurantdata']}
-            horizontal
+            data={cats}
+            scrollEnabled={false}
             className="w-full"
-            showsHorizontalScrollIndicator={false}
-            contentContainerClassName="w-full"
-            renderItem={({item}) => (
-              <FlatList
-                data={cats}
-                className="w-full"
-                keyExtractor={item => item.name}
-                renderItem={({item: cat, index}) => {
-                  const categoryItems = restaurant.items.filter(
-                    item => item.category.name === cat.name,
-                  );
-                  return (
-                    <View>
-                      <View>
-                        <Text className="text-black text-xl ">
-                          {cat.name} ({categoryItems.length})
-                        </Text>
-                      </View>
-                      <FlatList
-                        scrollEnabled={false}
-                        numColumns={2}
-                        keyExtractor={item => item.name}
-                        data={categoryItems}
-                        className=""
-                        renderItem={({item}) => {
-                          return (
-                            <TouchableOpacity
-                              className="w-[45%] m-[2.5%] aspect-[3/4] "
-                              onPress={() =>
-                                navigation.navigate('details', {
-                                  restaurant,
-                                  item,
-                                  cat,
-                                })
-                              }>
-                              <View className="w-full h-full">
-                                <View className="absolute bottom-[0%] left-0 bg-white w-full h-[60%] rounded-3xl z-10">
-                                  <View className=" absolute top-[-60%]  w-full aspect-[3/4] rounded-3xl z-10 px-5 items-center">
-                                    <View className="w-[80%] aspect-square rounded-full bg-white overflow-hidden">
-                                      <Image
-                                        source={cat.image}
-                                        className="w-full h-full shadow-sm"
-                                      />
-                                    </View>
-                                  </View>
-                                  <View className="  w-full h-full flex justify-start items-start p-2 z-10">
-                                    <Text className="text-black font-medium text-sm mt-5">
-                                      {item.name}
-                                    </Text>
-                                    <Text className="font-light text-xs line-clamp-2 text-black">
-                                      {item.description}
-                                    </Text>
-                                    <View className="w-full flex flex-row justify-between items-center rounded-full mb-3">
-                                      <Text className="text-black font-medium">
-                                        ₹ {item?.price}
-                                      </Text>
-                                      <View className="w-8 aspect-square rounded-full bg-[#ff7622] flex justify-center items-center">
-                                        <FaIcon
-                                          name="plus"
-                                          color="white"
-                                          size={18}
-                                        />
-                                      </View>
-                                    </View>
+            keyExtractor={item => item.name}
+            renderItem={({item: cat, index}) => {
+              const categoryItems = restaurant.items.filter(
+                item => item.category.name === cat.name,
+              );
+              return (
+                <View>
+                  <View>
+                    <Text className="text-black text-xl ">
+                      {cat.name} ({categoryItems.length})
+                    </Text>
+                  </View>
+                  <FlatList
+                    scrollEnabled={false}
+                    numColumns={2}
+                    keyExtractor={item => item.name}
+                    data={categoryItems}
+                    className=""
+                    renderItem={({item}) => {
+                      return (
+                        <TouchableOpacity
+                          className="w-[45%] m-[2.5%] aspect-[3/4] "
+                          onPress={() =>
+                            navigation.navigate('details', {
+                              restaurant,
+                              item,
+                              cat,
+                            })
+                          }>
+                          <View className="w-full h-full">
+                            <View className="absolute bottom-[0%] left-0 bg-white w-full h-[60%] rounded-3xl z-10">
+                              <View className=" absolute top-[-60%]  w-full aspect-[3/4] rounded-3xl z-10 px-5 items-center">
+                                <View className="w-[80%] aspect-square rounded-full bg-white overflow-hidden">
+                                  <Image
+                                    source={cat.image}
+                                    className="w-full h-full shadow-sm"
+                                  />
+                                </View>
+                              </View>
+                              <View className="  w-full h-full flex justify-start items-start p-2 z-10">
+                                <Text className="text-black font-medium text-sm mt-5">
+                                  {item.name}
+                                </Text>
+                                <Text className="font-light text-xs line-clamp-2 text-black">
+                                  {item.description}
+                                </Text>
+                                <View className="w-full flex flex-row justify-between items-center rounded-full mb-3">
+                                  <Text className="text-black font-medium">
+                                    ₹ {item?.price}
+                                  </Text>
+                                  <View className="w-8 aspect-square rounded-full bg-[#ff7622] flex justify-center items-center">
+                                    <FaIcon
+                                      name="plus"
+                                      color="white"
+                                      size={18}
+                                    />
                                   </View>
                                 </View>
                               </View>
-                            </TouchableOpacity>
-                          );
-                        }}
-                      />
-                    </View>
-                  );
-                }}
-              />
-            )}
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    }}
+                  />
+                </View>
+              );
+            }}
           />
         </View>
       </Animated.ScrollView>
