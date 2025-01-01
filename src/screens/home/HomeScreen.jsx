@@ -18,6 +18,7 @@ import {greeting} from '../../utils/greetings';
 import {categories} from '../../demo/restaurants/categories';
 import {restaurants} from '../../demo/restaurants/restaurents';
 import classNames from 'classnames';
+import Animated from 'react-native-reanimated';
 
 export const categoryCard = (item = {}, showImage = true) => {
   return (
@@ -197,46 +198,58 @@ function HomeScreen({navigation, ...props}) {
           />
         </View>
       </View>
-      <View className="py-2 w-full flex-row justify-between items-center">
-        <Text className="text-lg text-black font-light"> All Categories</Text>
-        <View className="flex flex-row items-center gap-x-1">
-          <Text className="font-light text-black">See All</Text>
-          <View>
-            <FaIcon name="chevron-right" />
+      <Animated.ScrollView showsVerticalScrollIndicator={false}>
+        <View className="py-2 w-full flex-row justify-between items-center">
+          <Text className="text-lg text-black font-light"> All Categories</Text>
+          <View className="flex flex-row items-center gap-x-1">
+            <Text className="font-light text-black">See All</Text>
+            <View>
+              <FaIcon name="chevron-right" />
+            </View>
           </View>
         </View>
-      </View>
-      <View className="w-full">
-        <FlatList
-          className="w-full h-[100px] px-1"
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          data={categories}
-          keyExtractor={cat => cat.name}
-          renderItem={({item, index}) => categoryCard(item)}
-        />
-      </View>
-      <View className="py-2 w-full flex-row justify-between items-center">
-        <Text className="text-lg text-black font-light">
-          {' '}
-          Open Restaurants{' '}
-        </Text>
-        <View className="flex flex-row items-center gap-x-1">
-          <Text className="font-light text-black">See All</Text>
-          <View>
-            <FaIcon name="chevron-right" />
+        <View className="w-full">
+          <FlatList
+            className="w-full h-[100px] px-1"
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={categories}
+            keyExtractor={cat => cat.name}
+            renderItem={({item, index}) => categoryCard(item)}
+          />
+        </View>
+        <View className="py-2 w-full flex-row justify-between items-center">
+          <Text className="text-lg text-black font-light">
+            {' '}
+            Open Restaurants{' '}
+          </Text>
+          <View className="flex flex-row items-center gap-x-1">
+            <Text className="font-light text-black">See All</Text>
+            <View>
+              <FaIcon name="chevron-right" />
+            </View>
           </View>
         </View>
-      </View>
-      <View className="w-full flex-1">
-        <FlatList
-          className="flex-1"
-          showsVerticalScrollIndicator={false}
-          data={restaurants}
-          keyExtractor={item => item.name}
-          renderItem={({item}) => restaurantCard(item)}
-        />
-      </View>
+        <View className="w-full flex-1">
+          <FlatList
+            data={['data']}
+            horizontal
+            className="w-full"
+            showsHorizontalScrollIndicator={false}
+            contentContainerClassName="w-full"
+            renderItem={({item}) => (
+              <FlatList
+                scrollEnabled
+                className=" h-full w-full"
+                showsVerticalScrollIndicator={false}
+                data={restaurants}
+                keyExtractor={item => item.name}
+                renderItem={({item}) => restaurantCard(item)}
+              />
+            )}
+          />
+        </View>
+      </Animated.ScrollView>
     </View>
   );
 }
