@@ -87,6 +87,12 @@ android {
         versionName "1.0"
     }
     signingConfigs {
+         release {
+            storeFile file('food_key_name.keystore')
+            storePassword 'foodapp'
+            keyAlias 'food_key_alias'
+            keyPassword 'foodapp'
+        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
